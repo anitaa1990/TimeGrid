@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,7 +26,7 @@ fun MainApp(
 ) {
     Row (
         modifier = modifier.fillMaxSize().background(
-            color = Color.Black
+            color = MaterialTheme.colorScheme.primary
         ).padding(16.dp)
     ) {
         // Grid layout
@@ -53,8 +54,8 @@ fun DotGridScreen(
         items(totalDots) { index ->
             // Pass whether the dot should be white (progress completed) or gray (remaining)
             val color = if (index < progress) {
-                Color.LightGray.copy(alpha = 0.4f)
-            } else Color.White
+                MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.4f)
+            } else MaterialTheme.colorScheme.onPrimary
             DrawDot(color = color)
         }
     }
