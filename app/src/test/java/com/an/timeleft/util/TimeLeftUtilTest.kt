@@ -42,19 +42,19 @@ class TimeLeftUtilTest {
     @Test
     fun `test getDaysCompleted`() {
         val expectedDaysCompleted = now.dayOfMonth.toLong() - 1
-        assertEquals(expectedDaysCompleted, TimeLeftUtil.getDaysCompleted())
+        assertEquals(expectedDaysCompleted, TimeLeftUtil.getDaysCompletedInMonth())
     }
 
     @Test
     fun `test getDaysLeft`() {
-        val expectedDaysLeft = (TimeLeftUtil.getTotalDaysInMonth() - TimeLeftUtil.getDaysCompleted())
-        assertEquals(expectedDaysLeft, TimeLeftUtil.getDaysLeft())
+        val expectedDaysLeft = (TimeLeftUtil.getTotalDaysInMonth() - TimeLeftUtil.getDaysCompletedInMonth())
+        assertEquals(expectedDaysLeft, TimeLeftUtil.getDaysLeftInMonth())
     }
 
     @Test
     fun `test getPercentageDaysLeft`() {
-        val expectedPercentage = (TimeLeftUtil.getDaysLeft().toDouble() / TimeLeftUtil.getTotalDaysInMonth().toDouble()) * 100
-        assertEquals("%.2f".format(expectedPercentage) + "%", TimeLeftUtil.getPercentageDaysLeft())
+        val expectedPercentage = (TimeLeftUtil.getDaysLeftInMonth().toDouble() / TimeLeftUtil.getTotalDaysInMonth().toDouble()) * 100
+        assertEquals("%.2f".format(expectedPercentage) + "%", TimeLeftUtil.getPercentageDaysLeftInMonth())
     }
 
     @Test
@@ -62,19 +62,19 @@ class TimeLeftUtilTest {
         val birthDate = LocalDate.of(1995, 6, 15) // Example birthdate
         val monthsLived = now.year * 12 + now.monthValue - (1995 * 12 + 6)
         val expectedMonthsLeft = (1000 - monthsLived).coerceAtLeast(0)
-        assertEquals(expectedMonthsLeft.toLong(), TimeLeftUtil.getTotalMonthsLeft(birthDate))
+        assertEquals(expectedMonthsLeft.toLong(), TimeLeftUtil.getTotalMonthsLeftInLife(birthDate))
     }
 
     @Test
     fun `test getTotalMonthsLeft with future birthdate`() {
         val birthDate = now.plusYears(10) // Future birthdate (invalid case)
-        assertEquals(1000, TimeLeftUtil.getTotalMonthsLeft(birthDate))
+        assertEquals(1000, TimeLeftUtil.getTotalMonthsLeftInLife(birthDate))
     }
 
     @Test
     fun `test getPercentageMonthsLeft`() {
         val birthDate = LocalDate.of(1995, 6, 15)
-        val expectedPercentage = (TimeLeftUtil.getTotalMonthsLeft(birthDate).toDouble() / 1000.0) * 100
-        assertEquals("%.2f".format(expectedPercentage) + "%", TimeLeftUtil.getPercentageMonthsLeft(birthDate))
+        val expectedPercentage = (TimeLeftUtil.getTotalMonthsLeftInLife(birthDate).toDouble() / 1000.0) * 100
+        assertEquals("%.2f".format(expectedPercentage) + "%", TimeLeftUtil.getPercentageMonthsLeftInLife(birthDate))
     }
 }
