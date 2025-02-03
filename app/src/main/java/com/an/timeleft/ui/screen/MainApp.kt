@@ -15,21 +15,37 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.an.timeleft.R
+import com.an.timeleft.data.LeftUiModel
 import com.an.timeleft.ui.viewmodel.TimeLeftViewModel
-import com.an.timeleft.util.TimeLeftUtil
 
 @Composable
 fun MainApp(
     viewModel: TimeLeftViewModel,
     modifier: Modifier = Modifier
 ) {
+    val uiState = viewModel.currentUiState.collectAsStateWithLifecycle(
+        lifecycleOwner = LocalLifecycleOwner.current
+    ).value
+
+    val timeLeftString = if (uiState.isTimeLeftInDays) {
+        stringResource(R.string.time_left_in_days, uiState.timeLeft)
+    } else stringResource(R.string.time_left_in_percent, uiState.timeLeftInPercentage)
+
     Column (
         modifier = modifier.fillMaxSize().background(
             color = MaterialTheme.colorScheme.primary
@@ -37,48 +53,61 @@ fun MainApp(
     ) {
         // Grid layout
         DotGridScreen(
-            totalDots = TimeLeftUtil.getTotalDaysInYear().toInt(),
-            progress = TimeLeftUtil.getDaysCompletedInYear().toInt()
+            totalDots = uiState.totalTime.toInt(),
+            progress = uiState.timeCompleted.toInt()
         )
 
         // Bottom layout with title & days/percentage left.
         BottomLayout(
-            title = "2025",
-            timeLeft = "365 days left"
+            uiState = uiState,
+            timeLeft = timeLeftString,
+            onTitleClicked = { viewModel.onTitleClicked() },
+            onTimeLeftClicked = { viewModel.onTimeLeftClicked() }
         )
     }
 }
 
 @Composable
 fun BottomLayout(
-    title: String,
-    timeLeft: String
+    uiState: LeftUiModel,
+    timeLeft: String,
+    onTitleClicked: () -> Unit,
+    onTimeLeftClicked: () -> Unit
 ) {
     Column (
-        modifier = Modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.Bottom
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center
     ) {
         Row {
-            Text(
-                text = title,
-                style = TextStyle(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontFamily = FontFamily.Monospace
-                ),
-                fontSize = 18.sp
-            )
+            TextButton(
+                onClick = onTitleClicked
+            ) {
+                Text(
+                    text = uiState.title,
+                    style = TextStyle(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontFamily = FontFamily.Monospace
+                    ),
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
 
             Spacer(Modifier.weight(1f))
 
-            Text(
-                text = timeLeft,
-                style = TextStyle(
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    fontFamily = FontFamily.Monospace
-                ),
-                fontSize = 18.sp
-            )
+            TextButton(
+                onClick = onTimeLeftClicked
+            ) {
+                Text(
+                    text = timeLeft,
+                    style = TextStyle(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontFamily = FontFamily.Monospace
+                    ),
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
@@ -88,13 +117,24 @@ fun DotGridScreen(
     totalDots: Int,
     progress: Int
 ) {
+    // Determine the dynamic dot size based on the total number of dots
+    val maxDotSize = 50.dp // Maximum size when dots are few
+    val minDotSize = 20.dp  // Minimum size when dots are many
+    val dynamicDotSize = remember(totalDots) {
+        when {
+            totalDots <= 50 -> maxDotSize
+            totalDots in 51..200 -> 15.dp
+            else -> minDotSize
+        }
+    }
+
     LazyVerticalGrid(
-        columns = GridCells.Adaptive(20.dp),
+        columns = GridCells.Adaptive(dynamicDotSize),
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(0.95f)
-            .padding(6.dp),
-        verticalArrangement = Arrangement.spacedBy(5.dp), // Add vertical spacing
+            .padding(5.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
         horizontalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         items(totalDots) { index ->
@@ -102,18 +142,19 @@ fun DotGridScreen(
             val color = if (index < progress) {
                 MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.4f)
             } else MaterialTheme.colorScheme.onPrimary
-            DrawDot(color = color)
+            DrawDot(color = color, dotSize = dynamicDotSize)
         }
     }
 }
 
 @Composable
 private fun DrawDot(
-    color: Color
+    color: Color,
+    dotSize: Dp
 ) {
     Canvas(
         modifier = Modifier
-            .size(20.dp) // Customize the dot size
+            .size(dotSize) // Customize the dot size
             .padding(5.dp) // Space between dots
     ) {
         drawCircle(
