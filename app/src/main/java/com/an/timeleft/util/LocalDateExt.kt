@@ -1,9 +1,9 @@
 package com.an.timeleft.util
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import java.time.Instant
+import java.time.ZoneId
 
-
-private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
-fun String.toLocalDate() = LocalDate.parse(this, dateFormatter)
+fun String.toLocalDate() =
+    Instant.ofEpochMilli(this.toLong())
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()

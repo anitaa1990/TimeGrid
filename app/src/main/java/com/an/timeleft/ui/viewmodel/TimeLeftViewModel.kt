@@ -27,13 +27,33 @@ class TimeLeftViewModel @Inject constructor(
     private val _currentUiState = MutableStateFlow<LeftUiModel>(getLeftUiModelForYear())
     val currentUiState = _currentUiState.asStateFlow()
 
+    private var birthDateInMillis: Long? = null
     private var birthDate: LocalDate? = null
 
     // Private flag to track of format (Days or Percentage)
     private var isTimeLeftInPercentageFormat = false
 
+    private val _showDatePicker = MutableStateFlow(false) // UI event to trigger bottom sheet
+    val showDatePicker = _showDatePicker.asStateFlow()
+
     init {
-        viewModelScope.launch { birthDate = dataStore.birthDate.firstOrNull()?.toLocalDate() }
+        viewModelScope.launch {
+            updateDate(dataStore.birthDate.firstOrNull()?.toLong())
+        }
+    }
+
+    fun getBirthDate() = birthDateInMillis
+
+    fun onBirthDateSelected(dateInMillis: Long?) {
+        dateInMillis?.let {
+            updateDate(it)
+            _currentUiState.update { getLeftUiModelForLife() }
+            viewModelScope.launch { dataStore.storeBirthDate(it.toString()) }
+        }
+    }
+
+    fun onDatePickerDismissed() {
+        _showDatePicker.update { false }
     }
 
     fun onTitleClicked() {
@@ -48,11 +68,19 @@ class TimeLeftViewModel @Inject constructor(
 
     fun onTimeLeftClicked() {
         _currentUiState.update { currentState ->
+            // If birthDate is null and category is Life, prompt user to add their birthday
+            if (currentState.category == LeftCategory.Life && birthDateInMillis == null) {
+                viewModelScope.launch { _showDatePicker.emit(true) } // Trigger UI event to show bottom sheet
+                return@update currentState // Return current state without changes
+            }
+
             isTimeLeftInPercentageFormat = !isTimeLeftInPercentageFormat
 
-            val newTimeLeftString = if (currentState.category == LeftCategory.Year) {
-                getTimeLeftInYear()
-            } else getTimeLeftInMonth()
+            val newTimeLeftString = when (currentState.category) {
+                LeftCategory.Year -> { getTimeLeftInYear() }
+                LeftCategory.Month -> { getTimeLeftInMonth() }
+                LeftCategory.Life -> { getTimeLeftInLife() }
+            }
 
             currentState.copy(timeLeftString = newTimeLeftString)
         }
@@ -81,6 +109,11 @@ class TimeLeftViewModel @Inject constructor(
         timeCompleted = getTimeCompletedInLife(),
         timeLeftString = getTimeLeftInLife()
     )
+
+    private fun updateDate(dateInMillis: Long?) {
+        birthDateInMillis = dateInMillis
+        birthDate = birthDateInMillis?.toString()?.toLocalDate()
+    }
 
     private fun getTimeLeftInYear() = if (isTimeLeftInPercentageFormat) {
         ResourceStringWithArgs(R.string.time_left_in_percent, TimeLeftUtil.getPercentageDaysLeftInYear())

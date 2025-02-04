@@ -3,4 +3,6 @@
     <string name="time_left_in_days">%s days left</string>
     <string name="time_left_in_percent">%s%% left</string>
     <string name="text_birth_date">When is your birthday?</string>
+    <string name="text_ok">OK</string>
+    <string name="text_cancel">Cancel</string>
 </resources>
