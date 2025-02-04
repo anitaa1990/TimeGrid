@@ -14,6 +14,7 @@ ksp = "2.0.21-1.0.28"
 mockitoKotlin = "5.2.1"
 coroutineTestVersion = "1.8.0"
 lifecycleRuntimeComposeAndroid = "2.8.7"
+dataStore = "1.1.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +46,9 @@ mockito-kotlin = { group = "org.mockito.kotlin", name = "mockito-kotlin", versio
 
 ## Lifecycle Compose
 androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose-android", version.ref = "lifecycleRuntimeComposeAndroid" }
+
+## Android DataStore
+datastore = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "dataStore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

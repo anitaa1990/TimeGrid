@@ -62,6 +62,9 @@ dependencies {
     // lifecycle compose
     implementation(libs.androidx.lifecycle.runtime.compose)
 
+    // DataStore
+    implementation(libs.datastore)
+
     // Coroutine unit test dependency
     testImplementation(libs.coroutine.test)
 
