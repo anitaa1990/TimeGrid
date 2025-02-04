@@ -20,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -29,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.an.timeleft.R
 import com.an.timeleft.data.LeftUiModel
+import com.an.timeleft.data.asString
 import com.an.timeleft.ui.viewmodel.TimeLeftViewModel
 
 @Composable
@@ -41,10 +40,6 @@ fun MainApp(
     val uiState = viewModel.currentUiState.collectAsStateWithLifecycle(
         lifecycleOwner = LocalLifecycleOwner.current
     ).value
-
-    val timeLeftString = if (uiState.isTimeLeftInDays) {
-        stringResource(R.string.time_left_in_days, uiState.timeLeft)
-    } else stringResource(R.string.time_left_in_percent, uiState.timeLeftInPercentage)
 
     Column (
         modifier = modifier.fillMaxSize().background(
@@ -60,7 +55,6 @@ fun MainApp(
         // Bottom layout with title & days/percentage left.
         BottomLayout(
             uiState = uiState,
-            timeLeft = timeLeftString,
             onTitleClicked = { viewModel.onTitleClicked() },
             onTimeLeftClicked = { viewModel.onTimeLeftClicked() }
         )
@@ -70,7 +64,6 @@ fun MainApp(
 @Composable
 fun BottomLayout(
     uiState: LeftUiModel,
-    timeLeft: String,
     onTitleClicked: () -> Unit,
     onTimeLeftClicked: () -> Unit
 ) {
@@ -99,7 +92,7 @@ fun BottomLayout(
                 onClick = onTimeLeftClicked
             ) {
                 Text(
-                    text = timeLeft,
+                    text = uiState.timeLeftString.asString(),
                     style = TextStyle(
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontFamily = FontFamily.Monospace
