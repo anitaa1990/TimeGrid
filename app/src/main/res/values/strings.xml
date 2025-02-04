@@ -2,4 +2,5 @@
     <string name="app_name">Time Left</string>
     <string name="time_left_in_days">%s days left</string>
     <string name="time_left_in_percent">%s%% left</string>
+    <string name="text_birth_date">When is your birthday?</string>
 </resources>

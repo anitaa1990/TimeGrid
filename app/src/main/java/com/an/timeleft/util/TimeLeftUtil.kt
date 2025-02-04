@@ -43,6 +43,14 @@ object TimeLeftUtil {
 
     fun getTotalMonthsInLife() = totalMonthsInLife.toLong()
 
+    fun getTotalMonthsCompletedInLife(birthDate: LocalDate): Long {
+        val monthsLived = ChronoUnit.MONTHS.between(birthDate, currentDate)
+        return when {
+            monthsLived < 0 -> 0 // If birth date is in the future, return 0
+            else -> monthsLived
+        }
+    }
+
     fun getTotalMonthsLeftInLife(birthDate: LocalDate): Long {
         val monthsLived = ChronoUnit.MONTHS.between(birthDate, currentDate)
         return when {
