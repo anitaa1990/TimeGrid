@@ -5,11 +5,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 
 data class LeftUiModel(
+    val category: LeftCategory,
     val title: String,
     val totalTime: Long,
     val timeCompleted: Long,
     val timeLeftString: UiString,
 )
+
+enum class LeftCategory {
+    Year, Month, Life
+}
 
 sealed class UiString {
     data class ResourceString(@StringRes val resId: Int) : UiString()

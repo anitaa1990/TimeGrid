@@ -2,6 +2,7 @@ package com.an.timeleft.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.an.timeleft.R
+import com.an.timeleft.data.LeftCategory
 import com.an.timeleft.data.LeftUiModel
 import com.an.timeleft.data.UiString.ResourceStringWithArgs
 import com.an.timeleft.util.TimeLeftUtil
@@ -10,25 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class TimeLeftViewModel: ViewModel() {
-    private val daysLeftInYearModel: LeftUiModel = LeftUiModel(
-        title = TimeLeftUtil.getCurrentYear().toString(),
-        totalTime = TimeLeftUtil.getTotalDaysInYear(),
-        timeCompleted = TimeLeftUtil.getDaysCompletedInYear(),
-        timeLeftString = ResourceStringWithArgs(
-            R.string.time_left_in_days, TimeLeftUtil.getDaysLeftInYear()
-        )
-    )
-
-    private val daysLeftInMonthModel: LeftUiModel = LeftUiModel(
-        title = TimeLeftUtil.getCurrentMonth().toString(),
-        totalTime = TimeLeftUtil.getTotalDaysInMonth(),
-        timeCompleted = TimeLeftUtil.getDaysCompletedInMonth(),
-        timeLeftString = ResourceStringWithArgs(
-            R.string.time_left_in_days, TimeLeftUtil.getDaysLeftInMonth()
-        )
-    )
-
-    private val _currentUiState = MutableStateFlow<LeftUiModel>(daysLeftInYearModel)
+    private val _currentUiState = MutableStateFlow<LeftUiModel>(getLeftUiModelForYear())
     val currentUiState = _currentUiState.asStateFlow()
 
     // Private flag to track of format (Days or Percentage)
@@ -36,39 +19,47 @@ class TimeLeftViewModel: ViewModel() {
 
     fun onTitleClicked() {
         _currentUiState.update { currentState ->
-            if (currentState.title == daysLeftInYearModel.title) {
-                daysLeftInMonthModel
-            } else daysLeftInYearModel
+            when (currentState.category) {
+                LeftCategory.Year -> { getLeftUiModelForMonth() }
+                LeftCategory.Month -> { getLeftUiModelForYear() }
+                LeftCategory.Life -> TODO()
+            }
         }
     }
 
     fun onTimeLeftClicked() {
         _currentUiState.update { currentState ->
-            val newTimeLeftString = if (isTimeLeftInPercentageFormat) {
-                // If currently in percentage mode, switch to days mode
-                ResourceStringWithArgs(
-                    R.string.time_left_in_days,
-                    if (currentState.title == daysLeftInYearModel.title) {
-                        TimeLeftUtil.getDaysLeftInYear()
-                    } else {
-                        TimeLeftUtil.getDaysLeftInMonth()
-                    }
-                )
-            } else {
-                // If currently in days mode, switch to percentage mode
-                ResourceStringWithArgs(
-                    R.string.time_left_in_percent,
-                    if (currentState.title == daysLeftInYearModel.title) {
-                        TimeLeftUtil.getPercentageDaysLeftInYear()
-                    } else {
-                        TimeLeftUtil.getPercentageDaysLeftInMonth()
-                    }
-                )
-            }
-
             isTimeLeftInPercentageFormat = !isTimeLeftInPercentageFormat
+
+            val newTimeLeftString = if (currentState.category == LeftCategory.Year) {
+                getTimeLeftInYear()
+            } else getTimeLeftInMonth()
 
             currentState.copy(timeLeftString = newTimeLeftString)
         }
     }
+
+    private fun getLeftUiModelForYear() = LeftUiModel(
+        category = LeftCategory.Year,
+        title = TimeLeftUtil.getCurrentYear().toString(),
+        totalTime = TimeLeftUtil.getTotalDaysInYear(),
+        timeCompleted = TimeLeftUtil.getDaysCompletedInYear(),
+        timeLeftString = getTimeLeftInYear()
+    )
+
+    private fun getLeftUiModelForMonth() = LeftUiModel(
+        category = LeftCategory.Month,
+        title = TimeLeftUtil.getCurrentMonth().toString(),
+        totalTime = TimeLeftUtil.getTotalDaysInMonth(),
+        timeCompleted = TimeLeftUtil.getDaysCompletedInMonth(),
+        timeLeftString = getTimeLeftInMonth()
+    )
+
+    private fun getTimeLeftInYear() = if (isTimeLeftInPercentageFormat) {
+        ResourceStringWithArgs(R.string.time_left_in_percent, TimeLeftUtil.getPercentageDaysLeftInYear())
+    } else ResourceStringWithArgs(R.string.time_left_in_days, TimeLeftUtil.getDaysLeftInYear())
+
+    private fun getTimeLeftInMonth() = if (isTimeLeftInPercentageFormat) {
+        ResourceStringWithArgs(R.string.time_left_in_percent, TimeLeftUtil.getPercentageDaysLeftInMonth())
+    } else ResourceStringWithArgs(R.string.time_left_in_days, TimeLeftUtil.getDaysLeftInMonth())
 }
