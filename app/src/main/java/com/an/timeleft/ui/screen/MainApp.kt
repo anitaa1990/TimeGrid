@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.an.timeleft.data.LeftUiModel
+import com.an.timeleft.data.alpha
 import com.an.timeleft.data.asString
 import com.an.timeleft.ui.viewmodel.TimeLeftViewModel
 
@@ -94,7 +95,7 @@ fun BottomLayout(
                 Text(
                     text = uiState.timeLeftString.asString(),
                     style = TextStyle(
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = MaterialTheme.colorScheme.onPrimary.copy(uiState.timeLeftString.alpha()),
                         fontFamily = FontFamily.Monospace
                     ),
                     fontSize = 18.sp,
@@ -112,12 +113,20 @@ fun DotGridScreen(
 ) {
     // Determine the dynamic dot size based on the total number of dots
     val maxDotSize = 50.dp // Maximum size when dots are few
-    val minDotSize = 20.dp  // Minimum size when dots are many
+    val minDotSize = 11.5.dp  // Minimum size when dots are many
     val dynamicDotSize = remember(totalDots) {
         when {
             totalDots <= 50 -> maxDotSize
-            totalDots in 51..200 -> 15.dp
+            totalDots in 51..500 -> 20.dp
             else -> minDotSize
+        }
+    }
+
+    val dynamicPadding = remember(totalDots) {
+        when {
+            totalDots <= 50 -> 5.dp
+            totalDots in 51..500 -> 5.dp
+            else -> 2.dp
         }
     }
 
@@ -135,7 +144,7 @@ fun DotGridScreen(
             val color = if (index < progress) {
                 MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.4f)
             } else MaterialTheme.colorScheme.onPrimary
-            DrawDot(color = color, dotSize = dynamicDotSize)
+            DrawDot(color = color, dotSize = dynamicDotSize, padding = dynamicPadding)
         }
     }
 }
@@ -143,12 +152,13 @@ fun DotGridScreen(
 @Composable
 private fun DrawDot(
     color: Color,
-    dotSize: Dp
+    dotSize: Dp,
+    padding: Dp
 ) {
     Canvas(
         modifier = Modifier
             .size(dotSize) // Customize the dot size
-            .padding(5.dp) // Space between dots
+            .padding(padding) // Space between dots
     ) {
         drawCircle(
             color = color,

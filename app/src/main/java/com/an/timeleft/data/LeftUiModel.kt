@@ -3,6 +3,7 @@ package com.an.timeleft.data
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.an.timeleft.R
 
 data class LeftUiModel(
     val category: LeftCategory,
@@ -27,5 +28,12 @@ fun UiString.asString(): String {
         is UiString.ResourceString -> stringResource(id = resId)
         is UiString.ResourceStringWithArgs -> stringResource(id = resId, args)
     }
+}
+
+@Composable
+fun UiString.alpha(): Float {
+    return if (this.asString() == stringResource(R.string.text_birth_date)) {
+        0.4f
+    } else 1f
 }
 
