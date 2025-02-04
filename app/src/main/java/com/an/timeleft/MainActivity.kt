@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.an.timeleft.ui.screen.MainApp
 import com.an.timeleft.ui.theme.TimeLeftTheme
 import com.an.timeleft.ui.viewmodel.TimeLeftViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +26,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     containerColor = MaterialTheme.colorScheme.primary
                 ) { innerPadding ->
-                    val viewModel: TimeLeftViewModel = viewModel()
+                    val viewModel: TimeLeftViewModel = hiltViewModel()
                     MainApp(
                         viewModel = viewModel,
                         modifier = Modifier.padding(innerPadding)

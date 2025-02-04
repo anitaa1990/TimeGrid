@@ -3,14 +3,20 @@ package com.an.timeleft.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import com.an.timeleft.R
 import com.an.timeleft.data.LeftCategory
+import com.an.timeleft.data.LeftDataStore
 import com.an.timeleft.data.LeftUiModel
 import com.an.timeleft.data.UiString.ResourceStringWithArgs
 import com.an.timeleft.util.TimeLeftUtil
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
-class TimeLeftViewModel: ViewModel() {
+@HiltViewModel
+class TimeLeftViewModel @Inject constructor(
+    private val dataStore: LeftDataStore
+): ViewModel() {
     private val _currentUiState = MutableStateFlow<LeftUiModel>(getLeftUiModelForYear())
     val currentUiState = _currentUiState.asStateFlow()
 

@@ -41,6 +41,8 @@ object TimeLeftUtil {
 
     fun getPercentageDaysLeftInMonth() = ((daysLeft.toDouble() / totalDaysInMonth.toDouble()) * 100).toLong()
 
+    fun getTotalMonthsInLife() = totalMonthsInLife.toLong()
+
     fun getTotalMonthsLeftInLife(birthDate: LocalDate): Long {
         val monthsLived = ChronoUnit.MONTHS.between(birthDate, currentDate)
         return when {
