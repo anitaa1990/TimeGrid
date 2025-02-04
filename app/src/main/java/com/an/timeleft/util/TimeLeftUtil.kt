@@ -31,20 +31,15 @@ object TimeLeftUtil {
     fun getDaysCompletedInYear(): Long = daysCompletedInYear
     fun getDaysLeftInYear(): Long = daysLeftInYear
 
-    fun getPercentageDaysLeftInYear(): String {
-        val percentageLeft = (daysLeftInYear.toDouble() / totalDaysInYear.toDouble()) * 100
-        return "%.2f".format(Locale.getDefault(), percentageLeft) + "%"
-    }
+    fun getPercentageDaysLeftInYear() =
+        ((daysLeftInYear.toDouble() / totalDaysInYear.toDouble()) * 100).toLong()
 
     fun getCurrentMonth() = currentMonth
     fun getTotalDaysInMonth(): Long = totalDaysInMonth
     fun getDaysCompletedInMonth(): Long = daysCompleted
     fun getDaysLeftInMonth(): Long = daysLeft
 
-    fun getPercentageDaysLeftInMonth(): String {
-        val percentageLeft = (daysLeft.toDouble() / totalDaysInMonth.toDouble()) * 100
-        return "%.2f".format(Locale.getDefault(), percentageLeft) + "%"
-    }
+    fun getPercentageDaysLeftInMonth() = ((daysLeft.toDouble() / totalDaysInMonth.toDouble()) * 100).toLong()
 
     fun getTotalMonthsLeftInLife(birthDate: LocalDate): Long {
         val monthsLived = ChronoUnit.MONTHS.between(birthDate, currentDate)
@@ -54,8 +49,6 @@ object TimeLeftUtil {
         }
     }
 
-    fun getPercentageMonthsLeftInLife(birthDate: LocalDate): String {
-        val percentageLeft = (getTotalMonthsLeftInLife(birthDate).toDouble() / totalMonthsInLife.toDouble()) * 100
-        return "%.2f".format(Locale.getDefault(), percentageLeft) + "%"
-    }
+    fun getPercentageMonthsLeftInLife(birthDate: LocalDate) =
+        ((getTotalMonthsLeftInLife(birthDate).toDouble() / totalMonthsInLife.toDouble()) * 100).toLong()
 }

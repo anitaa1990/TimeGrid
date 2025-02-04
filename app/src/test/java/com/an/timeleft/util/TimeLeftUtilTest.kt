@@ -4,6 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 class TimeLeftUtilTest {
     private val systemZone = ZoneId.systemDefault() // Get system's time zone
@@ -29,8 +30,8 @@ class TimeLeftUtilTest {
 
     @Test
     fun `test getPercentageDaysLeftInYear`() {
-        val expectedPercentage = (TimeLeftUtil.getDaysLeftInYear().toDouble() / TimeLeftUtil.getTotalDaysInYear().toDouble()) * 100
-        assertEquals("%.2f".format(expectedPercentage) + "%", TimeLeftUtil.getPercentageDaysLeftInYear())
+        val expectedPercentage = ((TimeLeftUtil.getDaysLeftInYear().toDouble() / TimeLeftUtil.getTotalDaysInYear().toDouble()) * 100).toLong()
+        assertEquals(expectedPercentage, TimeLeftUtil.getPercentageDaysLeftInYear())
     }
 
     @Test
@@ -53,15 +54,15 @@ class TimeLeftUtilTest {
 
     @Test
     fun `test getPercentageDaysLeft`() {
-        val expectedPercentage = (TimeLeftUtil.getDaysLeftInMonth().toDouble() / TimeLeftUtil.getTotalDaysInMonth().toDouble()) * 100
-        assertEquals("%.2f".format(expectedPercentage) + "%", TimeLeftUtil.getPercentageDaysLeftInMonth())
+        val expectedPercentage = ((TimeLeftUtil.getDaysLeftInMonth().toDouble() / TimeLeftUtil.getTotalDaysInMonth().toDouble()) * 100).toLong()
+        assertEquals(expectedPercentage, TimeLeftUtil.getPercentageDaysLeftInMonth())
     }
 
     @Test
     fun `test getTotalMonthsLeft with past birthdate`() {
-        val birthDate = LocalDate.of(1995, 6, 15) // Example birthdate
-        val monthsLived = now.year * 12 + now.monthValue - (1995 * 12 + 6)
-        val expectedMonthsLeft = (1000 - monthsLived).coerceAtLeast(0)
+        val birthDate = LocalDate.of(1995, 6, 15)
+        val expectedMonthsLived = ChronoUnit.MONTHS.between(birthDate, now)
+        val expectedMonthsLeft = (1000 - expectedMonthsLived).coerceAtLeast(0)
         assertEquals(expectedMonthsLeft.toLong(), TimeLeftUtil.getTotalMonthsLeftInLife(birthDate))
     }
 
@@ -74,7 +75,7 @@ class TimeLeftUtilTest {
     @Test
     fun `test getPercentageMonthsLeft`() {
         val birthDate = LocalDate.of(1995, 6, 15)
-        val expectedPercentage = (TimeLeftUtil.getTotalMonthsLeftInLife(birthDate).toDouble() / 1000.0) * 100
-        assertEquals("%.2f".format(expectedPercentage) + "%", TimeLeftUtil.getPercentageMonthsLeftInLife(birthDate))
+        val expectedPercentage = ((TimeLeftUtil.getTotalMonthsLeftInLife(birthDate).toDouble() / 1000.0) * 100).toLong()
+        assertEquals(expectedPercentage, TimeLeftUtil.getPercentageMonthsLeftInLife(birthDate))
     }
 }
