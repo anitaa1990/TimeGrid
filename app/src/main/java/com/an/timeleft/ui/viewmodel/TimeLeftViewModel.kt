@@ -131,7 +131,7 @@ class TimeLeftViewModel @Inject constructor(
         return birthDate?.let {
             if (isTimeLeftInPercentageFormat) {
                 ResourceStringWithArgs(R.string.time_left_in_percent, TimeLeftUtil.getPercentageMonthsLeftInLife(it))
-            } else ResourceStringWithArgs(R.string.time_left_in_days, TimeLeftUtil.getTotalMonthsLeftInLife(it))
+            } else ResourceStringWithArgs(R.string.time_left_in_months, TimeLeftUtil.getTotalMonthsLeftInLife(it))
         } ?: ResourceString(R.string.text_birth_date)
     }
 }
