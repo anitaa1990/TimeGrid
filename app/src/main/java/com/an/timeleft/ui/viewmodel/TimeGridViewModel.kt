@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.an.timeleft.R
 import com.an.timeleft.data.LeftCategory
-import com.an.timeleft.data.LeftDataStore
+import com.an.timeleft.data.TimeGridDataStore
 import com.an.timeleft.data.LeftUiModel
 import com.an.timeleft.data.UiString
 import com.an.timeleft.data.UiString.ResourceString
 import com.an.timeleft.data.UiString.ResourceStringWithArgs
-import com.an.timeleft.util.TimeLeftUtil
+import com.an.timeleft.util.TimeGridUtil
 import com.an.timeleft.util.toLocalDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +21,8 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-class TimeLeftViewModel @Inject constructor(
-    private val dataStore: LeftDataStore
+class TimeGridViewModel @Inject constructor(
+    private val dataStore: TimeGridDataStore
 ): ViewModel() {
     private val _currentUiState = MutableStateFlow<LeftUiModel>(getLeftUiModelForYear())
     val currentUiState = _currentUiState.asStateFlow()
@@ -88,24 +88,24 @@ class TimeLeftViewModel @Inject constructor(
 
     private fun getLeftUiModelForYear() = LeftUiModel(
         category = LeftCategory.Year,
-        title = TimeLeftUtil.getCurrentYear().toString(),
-        totalTime = TimeLeftUtil.getTotalDaysInYear(),
-        timeCompleted = TimeLeftUtil.getDaysCompletedInYear(),
+        title = TimeGridUtil.getCurrentYear().toString(),
+        totalTime = TimeGridUtil.getTotalDaysInYear(),
+        timeCompleted = TimeGridUtil.getDaysCompletedInYear(),
         timeLeftString = getTimeLeftInYear()
     )
 
     private fun getLeftUiModelForMonth() = LeftUiModel(
         category = LeftCategory.Month,
-        title = TimeLeftUtil.getCurrentMonth().toString(),
-        totalTime = TimeLeftUtil.getTotalDaysInMonth(),
-        timeCompleted = TimeLeftUtil.getDaysCompletedInMonth(),
+        title = TimeGridUtil.getCurrentMonth().toString(),
+        totalTime = TimeGridUtil.getTotalDaysInMonth(),
+        timeCompleted = TimeGridUtil.getDaysCompletedInMonth(),
         timeLeftString = getTimeLeftInMonth()
     )
 
     private fun getLeftUiModelForLife() = LeftUiModel(
         category = LeftCategory.Life,
         title = LeftCategory.Life.name,
-        totalTime = TimeLeftUtil.getTotalMonthsInLife(),
+        totalTime = TimeGridUtil.getTotalMonthsInLife(),
         timeCompleted = getTimeCompletedInLife(),
         timeLeftString = getTimeLeftInLife()
     )
@@ -116,22 +116,22 @@ class TimeLeftViewModel @Inject constructor(
     }
 
     private fun getTimeLeftInYear() = if (isTimeLeftInPercentageFormat) {
-        ResourceStringWithArgs(R.string.time_left_in_percent, TimeLeftUtil.getPercentageDaysLeftInYear())
-    } else ResourceStringWithArgs(R.string.time_left_in_days, TimeLeftUtil.getDaysLeftInYear())
+        ResourceStringWithArgs(R.string.time_left_in_percent, TimeGridUtil.getPercentageDaysLeftInYear())
+    } else ResourceStringWithArgs(R.string.time_left_in_days, TimeGridUtil.getDaysLeftInYear())
 
     private fun getTimeLeftInMonth() = if (isTimeLeftInPercentageFormat) {
-        ResourceStringWithArgs(R.string.time_left_in_percent, TimeLeftUtil.getPercentageDaysLeftInMonth())
-    } else ResourceStringWithArgs(R.string.time_left_in_days, TimeLeftUtil.getDaysLeftInMonth())
+        ResourceStringWithArgs(R.string.time_left_in_percent, TimeGridUtil.getPercentageDaysLeftInMonth())
+    } else ResourceStringWithArgs(R.string.time_left_in_days, TimeGridUtil.getDaysLeftInMonth())
 
     private fun getTimeCompletedInLife() = birthDate?.let {
-        TimeLeftUtil.getTotalMonthsCompletedInLife(it)
-    } ?: TimeLeftUtil.getTotalMonthsInLife()
+        TimeGridUtil.getTotalMonthsCompletedInLife(it)
+    } ?: TimeGridUtil.getTotalMonthsInLife()
 
     private fun getTimeLeftInLife(): UiString {
         return birthDate?.let {
             if (isTimeLeftInPercentageFormat) {
-                ResourceStringWithArgs(R.string.time_left_in_percent, TimeLeftUtil.getPercentageMonthsLeftInLife(it))
-            } else ResourceStringWithArgs(R.string.time_left_in_months, TimeLeftUtil.getTotalMonthsLeftInLife(it))
+                ResourceStringWithArgs(R.string.time_left_in_percent, TimeGridUtil.getPercentageMonthsLeftInLife(it))
+            } else ResourceStringWithArgs(R.string.time_left_in_months, TimeGridUtil.getTotalMonthsLeftInLife(it))
         } ?: ResourceString(R.string.text_birth_date)
     }
 }

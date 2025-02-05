@@ -7,7 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class LeftDataStore(
+class TimeGridDataStore(
     private val context: Context
 ) {
     companion object {

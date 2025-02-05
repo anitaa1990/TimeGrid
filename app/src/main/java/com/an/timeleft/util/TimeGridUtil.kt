@@ -4,9 +4,8 @@ import java.time.LocalDate
 import java.time.Year
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
-import java.util.Locale
 
-object TimeLeftUtil {
+object TimeGridUtil {
     private val currentYear = Year.now().value
     private val firstDayOfYear = LocalDate.of(currentYear, 1, 1)
     private val lastDayOfYear = LocalDate.of(currentYear, 12, 31)

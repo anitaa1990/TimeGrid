@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.an.timeleft.ui.screen.MainApp
 import com.an.timeleft.ui.theme.TimeLeftTheme
-import com.an.timeleft.ui.viewmodel.TimeLeftViewModel
+import com.an.timeleft.ui.viewmodel.TimeGridViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     containerColor = MaterialTheme.colorScheme.primary
                 ) { innerPadding ->
-                    val viewModel: TimeLeftViewModel = hiltViewModel()
+                    val viewModel: TimeGridViewModel = hiltViewModel()
                     MainApp(
                         viewModel = viewModel,
                         modifier = Modifier.padding(innerPadding)

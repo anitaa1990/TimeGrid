@@ -23,11 +23,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.an.timeleft.data.LeftUiModel
 import com.an.timeleft.data.alpha
 import com.an.timeleft.data.asString
-import com.an.timeleft.ui.viewmodel.TimeLeftViewModel
+import com.an.timeleft.ui.viewmodel.TimeGridViewModel
 
 @Composable
 fun MainApp(
-    viewModel: TimeLeftViewModel,
+    viewModel: TimeGridViewModel,
     modifier: Modifier = Modifier
 ) {
     val uiState = viewModel.currentUiState.collectAsStateWithLifecycle(
@@ -42,7 +42,7 @@ fun MainApp(
         ).padding(10.dp).fillMaxSize()
     ) {
         // Grid layout
-        DotGridScreen(
+        TimeGridScreen(
             totalDots = uiState.totalTime.toInt(),
             progress = uiState.timeCompleted.toInt()
         )

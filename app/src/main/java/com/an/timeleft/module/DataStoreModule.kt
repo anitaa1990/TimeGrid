@@ -1,7 +1,7 @@
 package com.an.timeleft.module
 
 import android.content.Context
-import com.an.timeleft.data.LeftDataStore
+import com.an.timeleft.data.TimeGridDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,5 +16,5 @@ object DataStoreModule {
     @Singleton
     fun provideLeftDataStore(
         @ApplicationContext context: Context
-    ): LeftDataStore = LeftDataStore(context)
+    ): TimeGridDataStore = TimeGridDataStore(context)
 }
